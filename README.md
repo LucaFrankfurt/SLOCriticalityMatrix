@@ -87,6 +87,69 @@ src/
 
 ## 📊 Data Model
 
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    APPLICATION ||--o{ SERVICE : "has many"
+    SERVICE ||--o{ SERVICE_ENTRY : "has many"
+    SERVICE_ENTRY ||--o{ ESCALATION_TIER : "has many"
+
+    APPLICATION {
+        string id PK
+        string appId UK "External ID (APP-001)"
+        string name
+        string manager
+        string itao
+        string businessOwner
+    }
+
+    SERVICE {
+        string id PK
+        string appId FK "Links to Application"
+        string serviceName
+    }
+
+    SERVICE_ENTRY {
+        string id PK
+        array operatingDays "Mon, Tue, Wed..."
+        string operatingStartTime "09:00"
+        string operatingEndTime "17:00"
+    }
+
+    ESCALATION_TIER {
+        string priority "Pc, P1, P2, P3, P3c, P4"
+        int minDowntimeMinutes
+        int maxDowntimeMinutes "null = unlimited"
+    }
+```
+
+### Data Flow
+
+```
+┌─────────────────┐
+│   Application   │  One application can have many services
+└────────┬────────┘
+         │ 1:N (linked via appId)
+         ▼
+┌─────────────────┐
+│    Service      │  One service can have many time windows
+└────────┬────────┘
+         │ 1:N
+         ▼
+┌─────────────────┐
+│  ServiceEntry   │  One entry = operating hours for specific days
+│  (Time Window)  │  with escalation tiers
+└────────┬────────┘
+         │ 1:N
+         ▼
+┌─────────────────┐
+│ EscalationTier  │  Priority level based on downtime duration
+└─────────────────┘
+```
+
+> **📝 Adding Data:** See [`src/data/mockData.ts`](src/data/mockData.ts) for detailed instructions on adding applications, services, and time windows.
+
 ### Application
 
 ```typescript

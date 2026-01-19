@@ -1,5 +1,89 @@
 import { AppMasterData, Service } from "@/types";
 
+/**
+ * ============================================================================
+ * MOCK DATA - How to Add Applications and Services
+ * ============================================================================
+ *
+ * This file contains sample data for the SLO Criticality Matrix.
+ * In production, this data would come from a backend API/database.
+ *
+ * DATA RELATIONSHIPS:
+ * ┌─────────────────┐
+ * │   Application   │  One application can have many services
+ * │   (AppMasterData) │
+ * └────────┬────────┘
+ *          │ 1:N (via appId)
+ *          ▼
+ * ┌─────────────────┐
+ * │    Service      │  One service can have many time window entries
+ * └────────┬────────┘
+ *          │ 1:N
+ *          ▼
+ * ┌─────────────────┐
+ * │  ServiceEntry   │  One entry defines operating hours for specific days
+ * │  (Time Window)  │  with escalation tiers
+ * └────────┬────────┘
+ *          │ 1:N
+ *          ▼
+ * ┌─────────────────┐
+ * │ EscalationTier  │  Priority level based on downtime duration
+ * └─────────────────┘
+ *
+ * ============================================================================
+ * HOW TO ADD A NEW APPLICATION:
+ * ============================================================================
+ *
+ * Add an object to the `mockApps` array with these fields:
+ *
+ * {
+ *   id: "app-X",           // Internal unique ID (any string)
+ *   appId: "APP-XXX",      // External ID from your system (e.g., CMDB)
+ *   name: "App Name",      // Display name
+ *   manager: "Name",       // Application manager
+ *   managerDelegate: "Name",
+ *   itao: "Name",          // IT Application Owner
+ *   itaoDelegate: "Name",
+ *   businessOwner: "Name",
+ *   businessOwnerDelegate: "Name",
+ * }
+ *
+ * ============================================================================
+ * HOW TO ADD A NEW SERVICE:
+ * ============================================================================
+ *
+ * Add an object to the `mockServices` array:
+ *
+ * {
+ *   id: "svc-X",           // Unique service ID
+ *   serviceName: "Name",   // Display name
+ *   appId: "APP-XXX",      // Must match an application's appId field!
+ *   entries: [...]         // Array of time window entries (see below)
+ * }
+ *
+ * ============================================================================
+ * HOW TO ADD A TIME WINDOW ENTRY:
+ * ============================================================================
+ *
+ * Each entry defines operating hours for specific days:
+ *
+ * {
+ *   id: "entry-X",                           // Unique entry ID
+ *   operatingDays: ["Mon", "Tue", ...],      // Days: Mon|Tue|Wed|Thu|Fri|Sat|Sun
+ *   operatingStartTime: "09:00",             // Start time (24h format)
+ *   operatingEndTime: "17:00",               // End time (use "24:00" for midnight)
+ *   escalationTiers: [                       // Priority escalation rules
+ *     { priority: "P4", minDowntimeMinutes: 0, maxDowntimeMinutes: 60 },
+ *     { priority: "P3", minDowntimeMinutes: 60, maxDowntimeMinutes: 180 },
+ *     { priority: "P2", minDowntimeMinutes: 180, maxDowntimeMinutes: null }, // null = no limit
+ *   ]
+ * }
+ *
+ * PRIORITY LEVELS: Pc (Critical) > P1 > P2 > P3 > P3c > P4 (Low)
+ *
+ * ============================================================================
+ */
+
 export const mockApps: AppMasterData[] = [
   {
     id: "app-1",
