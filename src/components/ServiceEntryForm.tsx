@@ -18,19 +18,19 @@ interface ServiceEntryFormProps {
   onClose: () => void;
 }
 
-export function ServiceEntryForm({ 
-  apps, 
-  initialEntry, 
+export function ServiceEntryForm({
+  apps,
+  initialEntry,
   initialServiceName,
   initialAppId,
   mode,
-  onSubmitService, 
+  onSubmitService,
   onSubmitEntry,
-  onClose 
+  onClose
 }: ServiceEntryFormProps) {
   const [serviceName, setServiceName] = useState(initialServiceName || '');
-  const [appId, setAppId] = useState(initialAppId || apps[0]?.id || '');
-  
+  const [appId, setAppId] = useState(initialAppId || apps[0]?.appId || '');
+
   const [entryData, setEntryData] = useState({
     operatingDays: initialEntry?.operatingDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as Day[],
     operatingStartTime: initialEntry?.operatingStartTime || '09:00',
@@ -83,7 +83,7 @@ export function ServiceEntryForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (mode === 'service' && onSubmitService) {
       onSubmitService({
         serviceName,
@@ -93,7 +93,7 @@ export function ServiceEntryForm({
     } else if (mode === 'entry' && onSubmitEntry) {
       onSubmitEntry(entryData);
     }
-    
+
     onClose();
   };
 
@@ -143,7 +143,7 @@ export function ServiceEntryForm({
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   {apps.map((app) => (
-                    <option key={app.id} value={app.id}>
+                    <option key={app.appId} value={app.appId}>
                       {app.name}
                     </option>
                   ))}
@@ -163,11 +163,10 @@ export function ServiceEntryForm({
                   key={day}
                   type="button"
                   onClick={() => toggleDay(day)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    entryData.operatingDays.includes(day)
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${entryData.operatingDays.includes(day)
                       ? 'bg-blue-600 text-white'
                       : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   {day}
                 </button>
@@ -267,10 +266,10 @@ export function ServiceEntryForm({
                     )}
                     <button
                       type="button"
-                      onClick={() => updateTier(index, { 
-                        maxDowntimeMinutes: tier.maxDowntimeMinutes === null 
-                          ? tier.minDowntimeMinutes + 60 
-                          : null 
+                      onClick={() => updateTier(index, {
+                        maxDowntimeMinutes: tier.maxDowntimeMinutes === null
+                          ? tier.minDowntimeMinutes + 60
+                          : null
                       })}
                       className="text-xs text-slate-500 hover:text-slate-300"
                     >

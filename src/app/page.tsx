@@ -51,7 +51,7 @@ export default function Home() {
   // Open form for new service
   const openNewServiceForm = (appId?: string) => {
     setFormMode("service");
-    setFormAppId(appId || apps[0]?.id || null);
+    setFormAppId(appId || apps[0]?.appId || null);
     setEditingServiceId(null);
     setEditingEntry(null);
     setIsFormOpen(true);
@@ -256,7 +256,7 @@ export default function Home() {
               <ApplicationCard
                 key={app.id}
                 app={app}
-                serviceCount={getAppServices(app.id).length}
+                serviceCount={getAppServices(app.appId).length}
                 onSelect={handleSelectApp}
               />
             ))}
@@ -272,10 +272,10 @@ export default function Home() {
       {selectedApp && (
         <ApplicationDetailView
           app={selectedApp}
-          services={getAppServices(selectedApp.id)}
+          services={getAppServices(selectedApp.appId)}
           onClose={() => setSelectedApp(null)}
           onSelectService={handleSelectService}
-          onAddService={() => openNewServiceForm(selectedApp.id)}
+          onAddService={() => openNewServiceForm(selectedApp.appId)}
           onDeleteService={handleDeleteService}
         />
       )}
@@ -308,9 +308,10 @@ export default function Home() {
         <ServiceEntryForm
           mode={formMode}
           apps={apps}
-          defaultAppId={formAppId || undefined}
-          editingEntry={editingEntry}
-          onSubmit={handleFormSubmit}
+          initialAppId={formAppId || undefined}
+          initialEntry={editingEntry || undefined}
+          onSubmitService={formMode === 'service' ? (data) => handleFormSubmit({ serviceName: data.serviceName, appId: data.appId, entry: { ...data.entry, id: `entry-${Date.now()}` } }) : undefined}
+          onSubmitEntry={formMode === 'entry' && editingServiceId ? (entry) => handleFormSubmit({ entry: { ...entry, id: editingEntry?.id || `entry-${Date.now()}` } }) : undefined}
           onClose={() => {
             setIsFormOpen(false);
             setEditingEntry(null);
